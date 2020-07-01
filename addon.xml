@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.video.thvli" version="1.1" name="Thvl Video Plugin" provider-name="Zero-0">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+        <import addon="script.module.requests" version="2.7.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="vn">Hỗ trợ xem phim của kênh thvl.</summary>
+        <description lang="vi_VN">Hỗ trợ xem lại các phim đã phát trên kênh truyền hình vĩnh long việt nam.</description>
+        <disclaimer lang="vi_VN">Phần mở rộng này không chịu bất cứ trách nhiệm nào có liên quan.</disclaimer>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+        <platform>all</platform>
+        <source>https://github.com/NguyenKhong/thvl-plugin-kodi</source>
+    </extension>
+</addon>
