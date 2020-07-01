@@ -1,6 +1,6 @@
 # plugin.video.thvli - phần mở rộng kodi 18
 
-Hỗ trợ xem lại các phim đã phát trên kênh truyền hình vĩnh long việt nam.Phần mở rộng này không chịu bất cứ trách nhiệm nào có liên quan.
+Hỗ trợ xem lại các phim đã phát trên kênh truyền hình vĩnh long việt nam. Phần mở rộng này không chịu bất cứ trách nhiệm nào có liên quan.
 
 ## Yêu cầu
 - Kodi 18
