@@ -6,13 +6,13 @@
 
 import sys, os
 import math
+import time
 from urllib import urlencode, quote
 from urlparse import parse_qsl
 import xbmcgui
 import xbmcplugin
 import xbmc
 import HttpRequest
-
 
 _BASE_URL = sys.argv[0]
 _HANDLE = int(sys.argv[1])
@@ -42,8 +42,13 @@ def buildUrl(**kwargs):
     """
     return '{0}?{1}'.format(_BASE_URL, urlencode(kwargs))
 
+def calcTimeDiff():
+    r = http.get("/now/")
+    server_time = int(r.text)
+    return time.time() - server_time/1000
+
 def parseHomeMenu():
-    result = http.get("https://api.thvli.vn/backend/cm/menu/e3f56e40-94b0-4e1f-9830-7c7f0d1bd354/").json()
+    result = http.get("/menu/e3f56e40-94b0-4e1f-9830-7c7f0d1bd354/").json()
     return list(result)
 
 def showHomeMenu():
@@ -61,7 +66,7 @@ def showHomeMenu():
     xbmcplugin.endOfDirectory(_HANDLE, cacheToDisc=True)
 
 def getListRibbon(slug):
-    obj = http.get("https://api.thvli.vn/backend/cm/page/%s/?platform=web" % slug).json()
+    obj = http.get("/page/%s/?platform=web" % slug).json()
     return obj.get("ribbons", [])
 
 def listPage(slug):
@@ -76,7 +81,7 @@ def listPage(slug):
     xbmcplugin.endOfDirectory(_HANDLE, cacheToDisc=True)
 
 def RibbonDetail(id):
-    obj = http.get("https://api.thvli.vn/backend/cm/ribbon/%s/?page=0" % id).json()
+    obj = http.get("/ribbon/%s/?page=0" % id).json()
     for item in  obj["items"]:
         yield item
     limit = try_get(obj, lambda x: x["metadata"]["limit"])
@@ -84,7 +89,7 @@ def RibbonDetail(id):
     if limit and total:
         num_pages = int(math.ceil(float(total)/float(limit)))
         for num_page in range(1, num_pages):
-            obj = http.get("https://api.thvli.vn/backend/cm/ribbon/%s/?page=%d" % (id, num_page)).json()
+            obj = http.get("/ribbon/%s/?page=%d" % (id, num_page)).json()
             for item in obj["items"]:
                 yield item
     return 
@@ -110,11 +115,11 @@ def showRibbon(id):
     xbmcplugin.endOfDirectory(_HANDLE, cacheToDisc=True)
 
 def getDetail(slug):
-    obj = http.get("https://api.thvli.vn/backend/cm/detail/%s/" % slug).json()
+    obj = http.get("/get_detail/%s/" % slug).json()
     return obj
 
 def getEpisodes(id):
-    obj = http.get("https://api.thvli.vn/backend/cm/season_by_id/%s/" % id).json()
+    obj = http.get("/season_by_id/%s/" % id).json()
     return obj.get("episodes", [])
 
 def listMovies(slug):
@@ -142,7 +147,7 @@ def listMovies(slug):
 
 def play(id, title):
     # web_pdb.set_trace()
-    r = http.get("https://api.thvli.vn/backend/cm/detail/%s/" % id)
+    r = http.get("/get_detail/%s/" % id)
     result = r.json()
     link = result["play_info"]["data"]["hls_link_play"]
     play_item = xbmcgui.ListItem()
@@ -157,7 +162,7 @@ def play(id, title):
     xbmcplugin.setResolvedUrl(_HANDLE, True, play_item)
 
 def fecthSearchItems(text):
-    url_template = "https://api.thvli.vn/backend/cm/search/%s/?page=%d&limit=20"
+    url_template = "/search/%s/?page=%d&limit=20"
     obj = http.get(url_template % (text, 0)).json()
     for item in  obj["items"]:
         yield item
@@ -203,6 +208,7 @@ def doSearch():
     
 def router():
 
+    HttpRequest.TIME_DIFF = calcTimeDiff()
     args = dict(parse_qsl(sys.argv[2][1:]))
     if not args: 
         showHomeMenu()
